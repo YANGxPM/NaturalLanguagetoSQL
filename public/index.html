@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Natural Language to SQL Translator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Natural Language to SQL Translator</h1>
+            <p class="subtitle">Powered by Claude AI</p>
+        </header>
+
+        <main>
+            <!-- Database Schema Section -->
+            <section class="schema-section">
+                <button class="schema-toggle" id="schemaToggle">
+                    <span class="toggle-icon">▼</span> View Database Schema
+                </button>
+                <div class="schema-content" id="schemaContent">
+                    <h3>E-commerce Database Schema</h3>
+                    <div class="schema-tables">
+                        <div class="schema-table">
+                            <h4>users</h4>
+                            <ul>
+                                <li><strong>user_id</strong> INT (PK)</li>
+                                <li><strong>username</strong> VARCHAR(50)</li>
+                                <li><strong>email</strong> VARCHAR(100)</li>
+                                <li><strong>created_at</strong> TIMESTAMP</li>
+                                <li><strong>last_login</strong> TIMESTAMP</li>
+                            </ul>
+                        </div>
+                        <div class="schema-table">
+                            <h4>products</h4>
+                            <ul>
+                                <li><strong>product_id</strong> INT (PK)</li>
+                                <li><strong>product_name</strong> VARCHAR(200)</li>
+                                <li><strong>category</strong> VARCHAR(50)</li>
+                                <li><strong>price</strong> DECIMAL(10, 2)</li>
+                                <li><strong>stock_quantity</strong> INT</li>
+                                <li><strong>created_at</strong> TIMESTAMP</li>
+                            </ul>
+                        </div>
+                        <div class="schema-table">
+                            <h4>orders</h4>
+                            <ul>
+                                <li><strong>order_id</strong> INT (PK)</li>
+                                <li><strong>user_id</strong> INT (FK)</li>
+                                <li><strong>order_date</strong> TIMESTAMP</li>
+                                <li><strong>total_amount</strong> DECIMAL(10, 2)</li>
+                                <li><strong>status</strong> VARCHAR(20)</li>
+                            </ul>
+                        </div>
+                        <div class="schema-table">
+                            <h4>order_items</h4>
+                            <ul>
+                                <li><strong>order_item_id</strong> INT (PK)</li>
+                                <li><strong>order_id</strong> INT (FK)</li>
+                                <li><strong>product_id</strong> INT (FK)</li>
+                                <li><strong>quantity</strong> INT</li>
+                                <li><strong>price_at_purchase</strong> DECIMAL(10, 2)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Input Section -->
+            <section class="input-section">
+                <label for="naturalLanguageInput">Enter your query in plain English:</label>
+                <textarea
+                    id="naturalLanguageInput"
+                    placeholder="Example: Show all orders from the last 30 days with total amount greater than $100"
+                    rows="4"
+                ></textarea>
+                <button class="generate-btn" id="generateBtn">Generate SQL</button>
+            </section>
+
+            <!-- Loading Spinner -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Generating SQL...</p>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage"></div>
+
+            <!-- Output Section -->
+            <section class="output-section" id="outputSection">
+                <div class="output-header">
+                    <h3>Generated SQL:</h3>
+                    <button class="copy-btn" id="copyBtn">
+                        <span class="copy-icon">📋</span> Copy to Clipboard
+                    </button>
+                </div>
+                <pre><code id="sqlOutput" class="sql-code"></code></pre>
+            </section>
+
+            <!-- Example Queries Section -->
+            <section class="examples-section">
+                <h3>Example Queries (click to use):</h3>
+                <div class="examples-grid">
+                    <button class="example-btn" data-query="Show all users who registered in the last 30 days">
+                        Show all users who registered in the last 30 days
+                    </button>
+                    <button class="example-btn" data-query="List the top 10 products by total revenue">
+                        List the top 10 products by total revenue
+                    </button>
+                    <button class="example-btn" data-query="Find orders with total amount greater than $500">
+                        Find orders with total amount greater than $500
+                    </button>
+                    <button class="example-btn" data-query="Show customers who haven't ordered in the last 6 months">
+                        Show customers who haven't ordered in the last 6 months
+                    </button>
+                    <button class="example-btn" data-query="Get the average order value by month for the current year">
+                        Get the average order value by month for the current year
+                    </button>
+                    <button class="example-btn" data-query="List products with stock quantity below 10">
+                        List products with stock quantity below 10
+                    </button>
+                    <button class="example-btn" data-query="Show the most popular product categories by number of orders">
+                        Show the most popular product categories by number of orders
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Built with Express.js and Claude API | <a href="https://github.com" target="_blank">View Documentation</a></p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
