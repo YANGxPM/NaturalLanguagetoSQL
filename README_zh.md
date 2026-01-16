@@ -1,4 +1,5 @@
 # 自然语言生成SQL
+[🔗English Version](README.md)
 ## 1. 项目概况 (Project Overview)
 Natural Language to SQL Translator 是一款创新的 Web 应用，旨在打破非技术用户与复杂数据库之间的壁垒。通过集成 Claude AI (Anthropic)，该应用允许用户直接使用“平实英语”（如：“查询过去30天内注册的所有用户”）进行提问，并即时获得结构化、可执行的 SQL 语句。
 

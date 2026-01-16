@@ -1,4 +1,5 @@
 # Natural Language to SQL Translator
+[🔗查看中文版](README_zh.md)
 
 A web application that translates natural language queries into SQL statements using Claude AI. Simply type what you want to query in plain English, and get the corresponding SQL code instantly.
 
