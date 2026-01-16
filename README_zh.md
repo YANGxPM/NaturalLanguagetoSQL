@@ -16,13 +16,14 @@ Natural Language to SQL Translator 是一款创新的 Web 应用，旨在打破�
 * 本地持久化：通过 Node.js 文件系统实现 cache.json 存储。
 * 离线优先：系统优先检索缓存，不仅实现了“零延迟”响应，还支持在无网络状态下复用已生成的查询。
 
-## 4. 技术栈 (Technology Stack)
-维度	技术选型
-AI 模型	Claude 3.5 Sonnet (Anthropic SDK)
-后端框架	Node.js + Express.js
-前端技术	Vanilla JavaScript + CSS3 + HTML5
-存储/缓存	Local File System (JSON-based persistence)
-环境管理	Dotenv (API Key 安全防护)
+## 4. 技术栈 (Technology Stack)            
+| 维度      | 技术选择                                   |
+|-----------|--------------------------------------------|
+| AI 模型   | Claude 3.5 Sonnet                          |
+| 前端技术  | Vanilla JavaScript + CSS3 + HTML5          |
+| 后端框架  | Node.js + Express.js                       |
+| 存储/缓存 | Local File System (JSON-based persistence) |
+| 环境管理  | Dotenv (API Key 安全防护)                  |
 
 ## 5. 关键成果 (Key Results)
 * 零成本重复查询：通过缓存机制，重复性查询的 API 成本降低了 100%。
