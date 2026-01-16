@@ -1,6 +1,8 @@
 const express = require('express');
 const Anthropic = require('@anthropic-ai/sdk');
 const dotenv = require('dotenv');
+const fs = require('fs');
+const path = require('path');
 const databaseSchema = require('./schema');
 
 // Load environment variables
@@ -18,6 +20,36 @@ app.use(express.static('public'));
 const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
 });
+
+// Cache file path
+const CACHE_FILE = path.join(__dirname, 'cache.json');
+
+// Helper function to read cache
+function readCache() {
+    try {
+        if (fs.existsSync(CACHE_FILE)) {
+            const data = fs.readFileSync(CACHE_FILE, 'utf8');
+            return JSON.parse(data);
+        }
+    } catch (error) {
+        console.error('Error reading cache:', error);
+    }
+    return {};
+}
+
+// Helper function to write cache
+function writeCache(cache) {
+    try {
+        fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf8');
+    } catch (error) {
+        console.error('Error writing cache:', error);
+    }
+}
+
+// Helper function to normalize query for cache key
+function normalizeQuery(query) {
+    return query.trim().toLowerCase();
+}
 
 // POST endpoint to generate SQL from natural language
 app.post('/api/generate-sql', async (req, res) => {
@@ -43,6 +75,20 @@ app.post('/api/generate-sql', async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: 'Query is too long (max 1000 characters)'
+            });
+        }
+
+        // Normalize query for cache lookup
+        const cacheKey = normalizeQuery(naturalLanguage);
+        const cache = readCache();
+
+        // Check cache first
+        if (cache[cacheKey]) {
+            console.log('Cache hit for query:', naturalLanguage);
+            return res.json({
+                success: true,
+                sql: cache[cacheKey],
+                cached: true
             });
         }
 
@@ -90,10 +136,16 @@ Output format: Return only valid SQL code without any markdown formatting or cod
         // Extract SQL from response
         const sql = message.content[0].text.trim();
 
+        // Save to cache
+        cache[cacheKey] = sql;
+        writeCache(cache);
+        console.log('Cached new query:', naturalLanguage);
+
         // Return the generated SQL
         res.json({
             success: true,
-            sql: sql
+            sql: sql,
+            cached: false
         });
 
     } catch (error) {
@@ -111,6 +163,15 @@ Output format: Return only valid SQL code without any markdown formatting or cod
             return res.status(429).json({
                 success: false,
                 error: 'Rate limit exceeded. Please try again in a moment'
+            });
+        }
+
+        // Check if it's a network error (offline)
+        if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.message?.includes('fetch')) {
+            return res.status(503).json({
+                success: false,
+                error: 'No internet connection. This query is not in cache. Please connect to internet to generate new SQL queries.',
+                offline: true
             });
         }
 

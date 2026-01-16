@@ -60,7 +60,7 @@ async function generateSQL(naturalLanguage) {
 
         if (data.success) {
             // Display the generated SQL
-            displaySQL(data.sql);
+            displaySQL(data.sql, data.cached);
         } else {
             // Show error message
             showError(data.error || 'Failed to generate SQL');
@@ -76,12 +76,34 @@ async function generateSQL(naturalLanguage) {
 }
 
 // Display SQL Output
-function displaySQL(sql) {
+function displaySQL(sql, cached = false) {
     sqlOutput.textContent = sql;
     outputSection.classList.add('show');
 
+    // Show info message if cached
+    if (cached) {
+        showInfo('Using cached result (previously generated)');
+    }
+
     // Scroll to output
     outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Show Info Message (for cached results)
+function showInfo(message) {
+    // Reuse error message element but with different styling
+    errorMessage.textContent = '✓ ' + message;
+    errorMessage.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    errorMessage.classList.add('show');
+
+    // Auto-hide after 3 seconds
+    setTimeout(() => {
+        errorMessage.classList.remove('show');
+        // Reset background color
+        setTimeout(() => {
+            errorMessage.style.background = '';
+        }, 300);
+    }, 3000);
 }
 
 // Show Error Message

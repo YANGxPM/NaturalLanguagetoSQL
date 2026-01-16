@@ -31,9 +31,6 @@ yarn-error.log*
 dist/
 build/
 
-
-node_modules/
-.env
-.DS_Store
-dist/
+# Cache (contains user-specific query history)
+cache.json
 

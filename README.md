@@ -5,6 +5,8 @@ A web application that translates natural language queries into SQL statements u
 ## Features
 
 - **Natural Language Processing**: Convert plain English queries to SQL using Claude AI
+- **Smart Caching System**: Previously generated SQL queries are cached locally for instant access
+- **Offline Support**: Reuse cached queries even without an internet connection
 - **Interactive Web Interface**: Clean, modern UI with real-time SQL generation
 - **Database Schema Context**: Provides an e-commerce database schema for accurate SQL generation
 - **Example Queries**: Pre-built examples to get you started quickly
@@ -73,6 +75,33 @@ Before you begin, ensure you have the following installed:
    - Click "Generate SQL" or press Ctrl/Cmd + Enter
    - View the generated SQL code
    - Click "Copy to Clipboard" to copy the SQL
+   - Cached queries will show a "✓ Using cached result" message and load instantly
+
+## How Caching Works
+
+The application uses a hybrid caching system that provides both speed and offline functionality:
+
+### When Online
+1. **First-time query**: Sends request to Claude API → Generates SQL → Saves to local cache → Returns result
+2. **Repeated query**: Checks cache first → Returns instantly (no API call needed)
+
+### When Offline
+- **Cached queries**: Work perfectly! Returns cached SQL immediately
+- **New queries**: Shows a helpful error message: "No internet connection. This query is not in cache."
+
+### Cache Benefits
+- ⚡ **Instant responses** for previously generated queries
+- 🔌 **Offline access** to your query history
+- 💰 **Reduced API costs** by avoiding duplicate requests
+- 🔄 **Persistent storage** - cache survives server restarts
+
+### Cache Management
+- Cache file: `cache.json` in the project root
+- Queries are normalized (case-insensitive, trimmed whitespace)
+- Automatically created on first use
+- Grows over time as you use more queries
+- To clear cache: Delete `cache.json` and restart the server
+- **Git**: By default, `cache.json` is in `.gitignore` (user-specific history). Remove from `.gitignore` if you want to share cache with your team
 
 ## Example Queries
 
@@ -130,6 +159,7 @@ NaturalLanguagetoSQL/
 ├── README.md            # This file
 ├── server.js            # Express backend server
 ├── schema.js            # Database schema definition
+├── cache.json           # Query cache (auto-generated)
 └── public/              # Frontend files
     ├── index.html       # Main HTML file
     ├── styles.css       # CSS styling
@@ -142,6 +172,7 @@ NaturalLanguagetoSQL/
 - **Express.js**: Web server framework
 - **@anthropic-ai/sdk**: Official Claude API client
 - **dotenv**: Environment variable management
+- **Node.js fs module**: Local caching system
 
 ### Frontend
 - **Vanilla JavaScript**: No framework dependencies
@@ -160,12 +191,15 @@ ANTHROPIC_API_KEY=your_actual_api_key_here
 
 Restart the server after adding the API key.
 
-### "Network error" message
+### "Network error" or "No internet connection" message
 
 **Solution**:
 - Check that the server is running on port 3000
 - Verify your internet connection
+- If offline: You can still use previously cached queries!
 - Check if another application is using port 3000
+
+**Note**: If you're offline, only queries you've previously generated will work. Once back online, you can generate new queries which will then be cached for future offline use.
 
 To use a different port:
 ```bash
@@ -202,9 +236,12 @@ Generate SQL from natural language.
 ```json
 {
   "success": true,
-  "sql": "SELECT * FROM users WHERE created_at >= NOW() - INTERVAL 30 DAY;"
+  "sql": "SELECT * FROM users WHERE created_at >= NOW() - INTERVAL 30 DAY;",
+  "cached": false
 }
 ```
+
+**Note**: The `cached` field indicates whether the result was retrieved from cache (`true`) or generated fresh from the API (`false`).
 
 ### GET `/api/health`
 
@@ -222,8 +259,10 @@ Check server and API key status.
 
 - **API Key Protection**: The API key is stored server-side in `.env` and never exposed to the client
 - **Input Validation**: All user inputs are validated on the backend
+- **Cache Storage**: Cache is stored locally on the server (not exposed to clients)
 - **HTTPS Recommended**: Use HTTPS in production environments
 - **Rate Limiting**: Consider adding rate limiting for production use
+- **Cache Privacy**: Be aware that cache.json stores your query history in plain text
 
 ## Customization
 

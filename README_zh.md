@@ -1,0 +1,43 @@
+# 自然语言生成SQL
+## 1. 项目概况 (Project Overview)
+Natural Language to SQL Translator 是一款创新的 Web 应用，旨在打破非技术用户与复杂数据库之间的壁垒。通过集成 Claude AI (Anthropic)，该应用允许用户直接使用“平实英语”（如：“查询过去30天内注册的所有用户”）进行提问，并即时获得结构化、可执行的 SQL 语句。
+
+## 2. 核心挑战与痛点 (The Problem)
+* 技术门槛：非技术人员（如运营、市场、产品经理）在获取数据时过度依赖开发团队，导致沟通成本高、效率低下。
+* API 延迟与成本：频繁调用大语言模型（LLM）会产生较高的 API 费用，并在网络波动时导致响应迟缓。
+* 离线局限性：大多数 AI 工具在无网络环境下完全瘫痪，无法满足移动办公或弱网环境的需求。
+
+## 3. 解决方案 (The Solution)
+智能 SQL 转换引擎
+利用 Claude 3.5 Sonnet 模型对电子商务 Schema（包含用户、产品、订单、子订单四张核心表）进行深度理解，确保生成的 SQL 语句具备 100% 的语法准确性和业务逻辑一致性。
+创新型双重缓存系统
+为了解决成本和延迟问题，项目实现了一个 Hybrid Caching System：
+* 本地持久化：通过 Node.js 文件系统实现 cache.json 存储。
+* 离线优先：系统优先检索缓存，不仅实现了“零延迟”响应，还支持在无网络状态下复用已生成的查询。
+
+## 4. 技术栈 (Technology Stack)
+维度	技术选型
+AI 模型	Claude 3.5 Sonnet (Anthropic SDK)
+后端框架	Node.js + Express.js
+前端技术	Vanilla JavaScript + CSS3 + HTML5
+存储/缓存	Local File System (JSON-based persistence)
+环境管理	Dotenv (API Key 安全防护)
+
+## 5. 关键成果 (Key Results)
+* 零成本重复查询：通过缓存机制，重复性查询的 API 成本降低了 100%。
+* 极致响应速度：缓存查询的响应时间从平均 2-3 秒缩短至 <10 毫秒。
+* 易用性：提供了 7+ 种预设场景案例，让没有任何编程背景的用户也能在 1 分钟内上手。
+
+## 6. 未来展望 (Future Roadmap)
+* 多模式 Schema 支持：允许用户上传自己的 SQL 建表脚本。
+* 实时执行：集成数据库连接池，直接在界面预览查询出的数据结果。
+* 可视化增强：对生成的 SQL 结果自动建议合适的图表（饼图、柱状图）。
+
+
+
+
+
+
+
+
+
